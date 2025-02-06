@@ -1,5 +1,5 @@
 # shell cpp
- A POSIX compliant shell written in C++ that's capable of interpreting shell commands, running external programs and builtin commands like cd, pwd, echo and more.
+A shell written in C++ that interprets commands, runs external programs, and supports built-in commands like `cd`, `pwd`, and `echo`.  
 ## Currently functioning commands
 - exit 0
 - echo
