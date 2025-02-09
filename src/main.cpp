@@ -13,10 +13,12 @@ const string PATH = getenv("PATH");
 int directoryCount = 1; 
 char pathDelimiter = ':';
 
-const string commands[3] = {
+const string commands[4] = {
     "exit 0",
     "echo",
-    "type"};
+    "type",
+    "pwd"
+};
 
 // Common string outputs
 const string shellStart("$ ");
@@ -77,6 +79,10 @@ int main(int argc, char* argv[])
     else if (command == commands[2])
     {
       type(input, directories, directoryCount);
+    }
+    else if (command == commands[3])
+    {
+      cout << filesystem::current_path().string() << endl;
     }
     else
     {
