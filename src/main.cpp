@@ -94,92 +94,95 @@ void echo(string input)
 // Only checks the first string up until the space
 void type(string str, const std::string* arr, size_t size)
 {
-//   // 1. Check if command is in commands[] (built-in)
-//   // 2. Check PATH, if found, print entire PATH
-//   // 3. Else command not fouund
+  // 1. Check if command is in commands[] (built-in)
+  // 2. Check PATH, if found, print entire PATH
+  // 3. Else command not fouund
 
-//   istringstream inputStream(str);
-//   string firstWord, secondWord;
+  istringstream inputStream(str);
+  string firstWord, secondWord;
 
-//   inputStream >> firstWord >> secondWord; // gets the word following "type"
+  inputStream >> firstWord >> secondWord; // gets the word following "type"
   
-//   for (int i = 0; i < sizeof(commands)/sizeof(commands[0]); i++)
-//   {
-//     string trimmedCommand(commands[i].substr(0, commands[i].find(" "))); // for commands with spaces like "exit 0"
-//     if (secondWord == trimmedCommand)
-//     {
-//       cout << RED << trimmedCommand << RESET << typeSuccess << endl; // Built-in
-//       return;
-//     }
-//   }
+  for (int i = 0; i < sizeof(commands)/sizeof(commands[0]); i++)
+  {
+    string trimmedCommand(commands[i].substr(0, commands[i].find(" "))); // for commands with spaces like "exit 0"
+    if (secondWord == trimmedCommand)
+    {
+      cout << RED << trimmedCommand << RESET << typeSuccess << endl; // Built-in
+      return;
+    }
+  }
 
-//   // Find command in PATH
-//   // 1. loop through array 
-//   // 2. loop through directories
-//   for (int i = 0; i < size; i++) {
+  // Find command in PATH
+  // 1. loop through array 
+  // 2. loop through directories
+  for (int i = 0; i < size; i++) {
     
-//     for (const auto& entry : filesystem::directory_iterator(arr[i])) {
+    for (const auto& entry : filesystem::directory_iterator(arr[i])) {
 
-//       // gets the path for the binary, and the binary is compared ot the command
-//       std::filesystem::path outfilename = entry.path();
-//       std::string outfilename_str = outfilename.string(); 
+      // gets the path for the binary, and the binary is compared ot the command
+      std::filesystem::path outfilename = entry.path();
+      std::string outfilename_str = outfilename.string(); 
   
-//       // Gets the binary from the path i.e., 'ls' from /usr/bin/ls
-//       std::string last_element = outfilename_str.substr(outfilename_str.rfind("/") + 1); //binary
+      // Gets the binary from the path i.e., 'ls' from /usr/bin/ls
+      std::string last_element = outfilename_str.substr(outfilename_str.rfind("/") + 1); //binary
       
-//       if (secondWord == last_element) {
-//         cout << RED << secondWord << RESET << " is " << outfilename_str << endl;
-//         return;
-//       }
+      if (secondWord == last_element) {
+        cout << RED << secondWord << RESET << " is " << outfilename_str << endl;
+        return;
+      }
 
-//     }
+    }
     
-//   }
+  }
 
-//   cout << secondWord << typeError << endl; // Command does not exist
-// }
+  cout << secondWord << typeError << endl; // Command does not exist
+}
 
-// void checkCommand(string str, const std::string* arr, size_t size, char* argv[]) {
+void checkCommand(string str, const std::string* arr, size_t size, char* argv[]) {
 
-//   // 1. Check if command is in PATH, and execute, 
-//   // 2. Must also accept command line arguments
-//   string secondWord = str.substr(0, str.find(" "));
+  // 1. Check if command is in PATH, and execute, 
+  // 2. Must also accept command line arguments
+  string firstWord = str.substr(0, str.find(" "));
 
-//   // Find command in PATH
-//   // 1. loop through array 
-//   // 2. loop through directories
-//   for (int i = 0; i < size; i++) {
+  // Find command in PATH
+  // 1. loop through array 
+  // 2. loop through directories
+  for (int i = 0; i < size; i++) {
     
-//     for (const auto& entry : filesystem::directory_iterator(arr[i])) {
+    for (const auto& entry : filesystem::directory_iterator(arr[i])) {
 
-//       // gets the path for the binary, and the binary is compared ot the command
-//       std::filesystem::path outfilename = entry.path();
-//       std::string outfilename_str = outfilename.string(); 
+      // gets the path for the binary, and the binary is compared ot the command
+      filesystem::path outfilename = entry.path();
+      string outfilename_str = outfilename.string(); 
   
-//       // Gets the binary from the path i.e., 'ls' from /usr/bin/ls
-//       std::string last_element = outfilename_str.substr(outfilename_str.rfind("/") + 1); //binary
+      // Gets the binary from the path i.e., 'ls' from /usr/bin/ls
+      std::string last_element = outfilename_str.substr(outfilename_str.rfind("/") + 1); //binary
       
-//       if (secondWord == last_element) {
-        
-//         pid_t pid = fork();
+      if (firstWord == last_element) {
 
-//           if (pid == 0) {
-//               execvp(outfilename_str, argv);
-//               perror("execvp failed");
-//               exit(1);
-//           } else if (pid > 0) {
-//               wait(nullptr);
-//           } else {
-//               perror("fork failed");
-//           }
+        if (str.find(" ") != string::npos) {                  
+          
+          // gets the path of the binary, and the arguments, and combines them
+          string commandAndArgumentsStr = firstWord + str.substr(str.find(" "), str.length() - 1);
+          
+          // converting string to char*
+          const char* commandAndArguments = commandAndArgumentsStr.c_str();
 
-//         return;
-//       }
+          system(commandAndArguments);
+        } else {
+          // runs binary without arguments
+          system(outfilename_str.c_str());
 
-//     }
+        }
+
+        return; // binary executed
+      }
+
+    }
     
-//   }
+  }
 
-//   cout << secondWord << typeError << endl; // Command does not exist
+  cout << firstWord << typeError << endl; // Command does not exist
 
 }
