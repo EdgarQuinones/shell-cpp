@@ -4,5 +4,6 @@ A shell written in C++ that interprets commands, runs external programs, and sup
 - exit 0
 - echo
 - type (built-in and PATH)
+- pwd
 - Any binaries w/ arguments that are in PATH 
  
