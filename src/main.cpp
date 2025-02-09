@@ -3,7 +3,11 @@
 
 using namespace std;
 
-// commands
+// Environment variables
+const string PATH = getenv("PATH");
+int directoryCount = 1; 
+char pathDelimiter = ':';
+
 const string commands[3] = {
     "exit 0",
     "echo",
@@ -25,10 +29,24 @@ void type(string input);
 
 int main()
 {
-
   // Flush after every std::cout / std:cerr
   cout << unitbuf;
   cerr << unitbuf;
+
+  // Makes a string array containing all the PATH directories
+  // Traverse through the string and count the colins and save in directoryCount
+  for (int i = 0; i < PATH.length(); i++) {
+    if (PATH[i] == pathDelimiter) { directoryCount++; }
+  }
+  // Use COUNT to make array of directories 
+  string directories[directoryCount];
+  stringstream ss(PATH);
+  string temp;
+  int count = 0;
+  while(getline(ss, temp, pathDelimiter)) {
+    directories[count] = temp;
+    count++;
+  }
 
   // Read-Eval-Print Loop
   while (true)
@@ -69,6 +87,10 @@ void echo(string input)
 // Only checks the first string up until the space
 void type(string input)
 {
+  // 1. Check if command is in commands[] (built-in)
+  // 2. Check PATH, if found, print entire PATH
+  // 3. Else command not fouund
+
   istringstream inputStream(input);
   string firstWord, secondWord;
 
@@ -79,9 +101,13 @@ void type(string input)
     string trimmedCommand(commands[i].substr(0, commands[i].find(" "))); // for commands with spaces like "exit 0"
     if (secondWord == trimmedCommand)
     {
-      cout << RED << trimmedCommand << RESET << typeSuccess << endl;
+      cout << RED << trimmedCommand << RESET << typeSuccess << endl; // Built-in
       return;
     }
   }
-  cout << secondWord << typeError << endl;
+
+  // Found in PATH
+
+  cout << secondWord << typeError << endl; // Command does not exist
 }
+
