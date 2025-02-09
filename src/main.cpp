@@ -1,5 +1,7 @@
 #include <iostream>
 #include <sstream>
+#include <filesystem>
+#include <string>
 
 using namespace std;
 
@@ -25,7 +27,7 @@ const string RESET = "\033[0m";
 
 // functions
 void echo(string input);
-void type(string input);
+void type(string input, const std::string* arr, size_t size);
 
 int main()
 {
@@ -69,7 +71,7 @@ int main()
     }
     else if (command == commands[2])
     {
-      type(input);
+      type(input, directories, directoryCount);
     }
     else
     {
@@ -85,17 +87,17 @@ void echo(string input)
 }
 
 // Only checks the first string up until the space
-void type(string input)
+void type(string str, const std::string* arr, size_t size)
 {
   // 1. Check if command is in commands[] (built-in)
   // 2. Check PATH, if found, print entire PATH
   // 3. Else command not fouund
 
-  istringstream inputStream(input);
+  istringstream inputStream(str);
   string firstWord, secondWord;
 
   inputStream >> firstWord >> secondWord; // gets the word following "type"
-
+  
   for (int i = 0; i < sizeof(commands)/sizeof(commands[0]); i++)
   {
     string trimmedCommand(commands[i].substr(0, commands[i].find(" "))); // for commands with spaces like "exit 0"
@@ -106,7 +108,28 @@ void type(string input)
     }
   }
 
-  // Found in PATH
+  // Find command in PATH
+  // 1. loop through array 
+  // 2. loop through directories
+  for (int i = 0; i < size; i++) {
+    
+    for (const auto& entry : filesystem::directory_iterator(arr[i])) {
+
+      // gets the path for the binary, and the binary is compared ot the command
+      std::filesystem::path outfilename = entry.path();
+      std::string outfilename_str = outfilename.string(); 
+  
+      // Gets the binary from the path i.e., 'ls' from /usr/bin/ls
+      std::string last_element = outfilename_str.substr(outfilename_str.rfind("/") + 1); //binary
+      
+      if (secondWord == last_element) {
+        cout << RED << secondWord << RESET << " is " << outfilename_str << endl;
+        return;
+      }
+
+    }
+    
+  }
 
   cout << secondWord << typeError << endl; // Command does not exist
 }
