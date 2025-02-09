@@ -3,4 +3,7 @@ A shell written in C++ that interprets commands, runs external programs, and sup
 ## Currently functioning commands
 - exit 0
 - echo
-- type (built-in and binaries from PATH)
+- type
+  - built-in
+  - binaries from PATH
+  - binaries w/ arguments 
